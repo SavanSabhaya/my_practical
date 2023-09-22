@@ -18,7 +18,7 @@ class SplashScreen extends StatelessWidget {
       body: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashNavigateState) {
-            Navigator.pushNamed(context, routelogin);
+            Navigator.pushReplacementNamed(context, routelogin);
           }
         },
         builder: (context, state) {

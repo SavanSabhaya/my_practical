@@ -46,10 +46,11 @@ class Routes {
                   child: RegisterScreen(),
                 ));
       case routeDashboard:
+        final arg = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             settings: settings,
             builder: (context) => BlocProvider(
-                  create: (create) => DashbordBloc(),
+                  create: (create) => DashbordBloc()..add(InitEvent(arg)),
                   child: const DashbordScreen(),
                 ));
       case routeUserProfile:
@@ -63,7 +64,7 @@ class Routes {
         return MaterialPageRoute(
             settings: settings,
             builder: (context) => BlocProvider(
-                  create: (create) => LeadPageBloc(),
+                  create: (create) => LeadPageBloc()..add(LeadInitEvent()),
                   child: const LeadPageScreen(),
                 ));
     }

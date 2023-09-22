@@ -6,3 +6,5 @@ sealed class LeadPageEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class LeadInitEvent extends LeadPageEvent {}

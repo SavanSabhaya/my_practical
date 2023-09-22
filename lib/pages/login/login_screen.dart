@@ -33,10 +33,10 @@ class LoginScreen extends StatelessWidget {
             showErrorSnackBar(context, state.message);
           } else if (state.status == LoadStatus.success) {
             EasyLoading.dismiss();
-            Navigator.pushReplacementNamed(context, routeDashboard);
+            Navigator.pushReplacementNamed(context, routeDashboard, arguments: {'getData': state.data});
             showSuccessSnackBar(context, state.message);
           } else if (state.status == LoadStatus.loading) {
-            EasyLoading.show(dismissOnTap: false);
+            EasyLoading.show(dismissOnTap: true);
           }
         },
         builder: (context, state) {
@@ -54,17 +54,13 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Login',
-                          style: AppThemeState().textStyleRegular(
-                              ColorConstants.textColor,
-                              fontSize: FontConstants.font_26,
-                              decoration: TextDecoration.none),
+                          style: AppThemeState().textStyleRegular(ColorConstants.textColor,
+                              fontSize: FontConstants.font_26, decoration: TextDecoration.none),
                         ),
                         Text(
                           'Welcome back',
-                          style: AppThemeState().textStyleLight(
-                              ColorConstants.textColor,
-                              fontSize: FontConstants.font_16,
-                              decoration: TextDecoration.none),
+                          style: AppThemeState().textStyleLight(ColorConstants.textColor,
+                              fontSize: FontConstants.font_16, decoration: TextDecoration.none),
                         ),
                       ],
                     ),
@@ -83,8 +79,7 @@ class LoginScreen extends StatelessWidget {
                           labelText: 'Email',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                           textInputType: TextInputType.emailAddress),
                       SizedBox(height: 10),
                       CommonTextFormField(
@@ -93,15 +88,13 @@ class LoginScreen extends StatelessWidget {
                           labelText: 'Password',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                           textInputType: TextInputType.visiblePassword),
                       SizedBox(height: 30),
                       CommonButton(
                         buttonText: 'Login',
                         onTap: () {
-                          context.read<LoginBloc>().add(ValidateEvent(
-                              emailController.text, passwordController.text));
+                          context.read<LoginBloc>().add(ValidateEvent(emailController.text, passwordController.text));
                         },
                       ),
                       SizedBox(height: 5),
@@ -110,8 +103,7 @@ class LoginScreen extends StatelessWidget {
                         child: Text(
                           'Forgot Password?',
                           style: AppThemeState().textStyleRegular(Colors.grey,
-                              fontSize: FontConstants.font_12,
-                              decoration: TextDecoration.none),
+                              fontSize: FontConstants.font_12, decoration: TextDecoration.none),
                         ),
                       )
                     ]),
@@ -128,14 +120,11 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                             text: 'Don\'t have an account\?',
-                            style: AppThemeState().textStyleRegular(Colors.grey,
-                                fontSize: FontConstants.font_12)),
+                            style: AppThemeState().textStyleRegular(Colors.grey, fontSize: FontConstants.font_12)),
                         TextSpan(
                           text: ' Sign up',
-                          style: AppThemeState().textStyleMedium(
-                              ColorConstants.primaryColor,
-                              fontSize: FontConstants.font_14,
-                              decoration: TextDecoration.underline),
+                          style: AppThemeState().textStyleMedium(ColorConstants.primaryColor,
+                              fontSize: FontConstants.font_14, decoration: TextDecoration.underline),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Navigator.popAndPushNamed(context, routeRegister);

@@ -1,11 +1,15 @@
 import 'dart:ffi';
 
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:practical/common/enums/loading_status.dart';
 import 'package:practical/pages/register/bloc/register_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:practical/common/constants/color_constants.dart';
 import 'package:practical/common/constants/font_constants.dart';
 import 'package:practical/common/widgets/common_button.dart';
 import 'package:practical/common/widgets/common_textformfield.dart';
+import 'package:practical/utils/CustomSnackBar.dart';
 import 'package:practical/utils/app_theme.dart';
 import 'package:practical/utils/routes.dart';
 import 'package:flutter/gestures.dart';
@@ -46,12 +50,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final imageNode = FocusNode();
 
   bool ischnage = true;
+  XFile? profileImage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<RegisterBloc, RegisterState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state.status == LoadStatus.validationError) {
+            showErrorSnackBar(context, state.message);
+          } else if (state.status == LoadStatus.failure) {
+            EasyLoading.dismiss();
+            showErrorSnackBar(context, state.message);
+          } else if (state.status == LoadStatus.success) {
+            EasyLoading.dismiss();
+            showSuccessSnackBar(context, state.message);
+            Navigator.pushNamedAndRemoveUntil(context, routeDashboard, (route) => false,
+                arguments: {'getData': state.data});
+          } else if (state.status == LoadStatus.loading) {
+            EasyLoading.show(dismissOnTap: true);
+          }
+        },
         builder: (context, state) {
           return Stack(
             children: [
@@ -67,19 +86,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         Text(
                           ischnage ? 'Signup' : "Company Details",
-                          style: AppThemeState().textStyleRegular(
-                              ColorConstants.textColor,
-                              fontSize: FontConstants.font_26,
-                              decoration: TextDecoration.none),
+                          style: AppThemeState().textStyleRegular(ColorConstants.textColor,
+                              fontSize: FontConstants.font_26, decoration: TextDecoration.none),
                         ),
                         Text(
                           ischnage
                               ? 'Enter your details to create your account'
                               : "Enter your company details \nto create your account",
-                          style: AppThemeState().textStyleLight(
-                              ColorConstants.textColor,
-                              fontSize: FontConstants.font_16,
-                              decoration: TextDecoration.none),
+                          style: AppThemeState().textStyleLight(ColorConstants.textColor,
+                              fontSize: FontConstants.font_16, decoration: TextDecoration.none),
                         ),
                       ],
                     ),
@@ -100,8 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelText: 'Full Name',
                             onChange: (p0) {},
                             inputBorders: OutlineInputBorder(),
-                            labelTextstyle:
-                                TextStyle(color: ColorConstants.blackColor),
+                            labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                             textInputType: TextInputType.name),
                         SizedBox(height: 10),
                         CommonTextFormField(
@@ -110,8 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelText: 'Contect No',
                             onChange: (p0) {},
                             inputBorders: OutlineInputBorder(),
-                            labelTextstyle:
-                                TextStyle(color: ColorConstants.blackColor),
+                            labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                             textInputType: TextInputType.phone),
                         SizedBox(height: 10),
                         CommonTextFormField(
@@ -120,8 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelText: 'Email',
                             onChange: (p0) {},
                             inputBorders: OutlineInputBorder(),
-                            labelTextstyle:
-                                TextStyle(color: ColorConstants.blackColor),
+                            labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                             textInputType: TextInputType.emailAddress),
                         SizedBox(height: 10),
                         CommonTextFormField(
@@ -130,8 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelText: 'Password',
                             onChange: (p0) {},
                             inputBorders: OutlineInputBorder(),
-                            labelTextstyle:
-                                TextStyle(color: ColorConstants.blackColor),
+                            labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                             textInputType: TextInputType.visiblePassword),
                         SizedBox(height: 10),
                         CommonTextFormField(
@@ -140,8 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             labelText: 'Confirm Password',
                             onChange: (p0) {},
                             inputBorders: OutlineInputBorder(),
-                            labelTextstyle:
-                                TextStyle(color: ColorConstants.blackColor),
+                            labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                             textInputType: TextInputType.visiblePassword),
                         SizedBox(height: 30),
                         Flexible(
@@ -196,6 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 labelText: 'Company Name',
                                 onChange: (p0) {},
                                 inputBorders: OutlineInputBorder(),
+                                labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                                 textInputType: TextInputType.name),
                             SizedBox(height: 10),
                             CommonTextFormField(
@@ -204,27 +215,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 labelText: 'Company address',
                                 onChange: (p0) {},
                                 inputBorders: OutlineInputBorder(),
+                                labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                                 textInputType: TextInputType.name),
                             SizedBox(height: 30),
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 8.0, top: 10, bottom: 10),
+                              padding: const EdgeInsets.only(left: 8.0, top: 10, bottom: 10),
                               child: Text(
                                 'Company Logo',
-                                style: AppThemeState().textStyleMedium(
-                                    ColorConstants.blackColor,
-                                    fontSize: FontConstants.font_18,
-                                    decoration: TextDecoration.none),
+                                style: AppThemeState().textStyleMedium(ColorConstants.blackColor,
+                                    fontSize: FontConstants.font_18, decoration: TextDecoration.none),
                               ),
                             ),
-                            CommonTextFormField(
-                                editController: imageController,
-                                focusNode: imageNode,
-                                labelText: 'Choose File   No File Chosen',
-                                isEnabled: false,
-                                onChange: (p0) {},
-                                inputBorders: OutlineInputBorder(),
-                                textInputType: TextInputType.name),
+                            InkWell(
+                              onTap: () {
+                                final ImagePicker picker = ImagePicker();
+                                picker.pickImage(source: ImageSource.camera).then((value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      profileImage = value;
+                                    });
+                                  }
+                                });
+                              },
+                              child: CommonTextFormField(
+                                  editController: imageController,
+                                  focusNode: imageNode,
+                                  labelText:
+                                      profileImage != null ? "${profileImage?.path}" : 'Choose File   No File Chosen',
+                                  isEnabled: false,
+                                  onChange: (p0) {},
+                                  inputBorders: OutlineInputBorder(),
+                                  textInputType: TextInputType.name),
+                            ),
                             SizedBox(height: 30),
                             Flexible(
                               child: Row(
@@ -234,12 +256,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     child: CommonButton(
                                       buttonText: 'Submit',
                                       onTap: () {
-                                        setState(() {
-                                          Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              routeDashboard,
-                                              (route) => false);
-                                        });
+                                        context.read<RegisterBloc>().add(ValidateEvent(
+                                            nameController.text,
+                                            int.parse(numberController.text),
+                                            emailController.text,
+                                            passwordController.text,
+                                            cfPasswordController.text,
+                                            companyNameController.text,
+                                            addController.text,
+                                            profileImage));
                                       },
                                     ),
                                   ),

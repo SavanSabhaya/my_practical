@@ -4,11 +4,9 @@
 
 import 'dart:convert';
 
-RegisterResponse registerResponseFromJson(String str) =>
-    RegisterResponse.fromJson(json.decode(str));
+RegisterResponse registerResponseFromJson(String str) => RegisterResponse.fromJson(json.decode(str));
 
-String registerResponseToJson(RegisterResponse data) =>
-    json.encode(data.toJson());
+String registerResponseToJson(RegisterResponse data) => json.encode(data.toJson());
 
 class RegisterResponse {
   bool? status;
@@ -21,8 +19,7 @@ class RegisterResponse {
     this.data,
   });
 
-  factory RegisterResponse.fromJson(Map<String, dynamic> json) =>
-      RegisterResponse(
+  factory RegisterResponse.fromJson(Map<String, dynamic> json) => RegisterResponse(
         status: json["status"],
         message: json["message"],
         data: json["data"] == null ? null : Data.fromJson(json["data"]),

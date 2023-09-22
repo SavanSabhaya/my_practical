@@ -1,3 +1,4 @@
+import 'package:practical/api_service/api_constant.dart';
 import 'package:practical/common/constants/color_constants.dart';
 import 'package:practical/common/constants/image_constants.dart';
 import 'package:practical/pages/dashbord/bloc/dashbord_bloc.dart';
@@ -25,9 +26,7 @@ class DashbordScreen extends StatelessWidget {
                 elevation: 0,
                 leading: Icon(Icons.drag_handle),
                 actions: [
-                  InkWell(
-                      onTap: () {},
-                      child: SvgPicture.asset(ImageConstants.svgnotification)),
+                  InkWell(onTap: () {}, child: SvgPicture.asset(ImageConstants.svgnotification)),
                 ],
               ),
               body: Stack(
@@ -47,37 +46,34 @@ class DashbordScreen extends StatelessWidget {
                               Container(
                                   height: 50,
                                   width: 50,
-                                  decoration: BoxDecoration(
-                                      color: Colors.amber,
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: Image.asset(ImageConstants.imgSplash)),
+                                  decoration:
+                                      BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(30)),
+                                  child: /*  state.data?.user?.profileImage != null
+                                      ? Image.network("${ApiConstant.baseUrl}${state.data?.user?.profileImage}")
+                                      : */
+                                      Image.asset(ImageConstants.imgSplash)),
+                              SizedBox(width: 10),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Welcome back',
-                                    style: AppThemeState().textStyleBold(
-                                        ColorConstants.textColor,
-                                        fontSize: FontConstants.font_20,
-                                        decoration: TextDecoration.none),
+                                    "${state.data != null ? state.data?.user?.fullName : 'Welcome back'}",
+                                    style: AppThemeState().textStyleBold(ColorConstants.textColor,
+                                        fontSize: FontConstants.font_20, decoration: TextDecoration.none),
                                   ),
                                   Text(
-                                    'Welcome back',
-                                    style: AppThemeState().textStyleLight(
-                                        ColorConstants.textColor,
-                                        fontSize: FontConstants.font_16,
-                                        decoration: TextDecoration.none),
+                                    "${state.data != null ? state.data?.user?.cmpName : 'Welcome back'}",
+                                    style: AppThemeState().textStyleLight(ColorConstants.textColor,
+                                        fontSize: FontConstants.font_16, decoration: TextDecoration.none),
                                   ),
                                 ],
                               ),
                               Spacer(),
                               InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                        context, routeUserProfile);
+                                    Navigator.pushNamed(context, routeUserProfile);
                                   },
-                                  child:
-                                      SvgPicture.asset(ImageConstants.svgedit)),
+                                  child: SvgPicture.asset(ImageConstants.svgedit)),
                             ],
                           ),
                         ),
@@ -97,23 +93,18 @@ class DashbordScreen extends StatelessWidget {
                               },
                               child: Card(
                                 child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 10,
+                                  height: MediaQuery.of(context).size.height / 10,
                                   width: MediaQuery.of(context).size.width / 4,
                                   child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        SvgPicture.asset(
-                                            ImageConstants.svgfilter),
+                                        SvgPicture.asset(ImageConstants.svgfilter),
                                         SizedBox(height: 10),
                                         Text(
                                           'Leads',
-                                          style: AppThemeState().textStyleBold(
-                                              Colors.black,
-                                              fontSize: FontConstants.font_12,
-                                              decoration: TextDecoration.none),
+                                          style: AppThemeState().textStyleBold(Colors.black,
+                                              fontSize: FontConstants.font_12, decoration: TextDecoration.none),
                                         )
                                       ]),
                                 ),
@@ -131,10 +122,8 @@ class DashbordScreen extends StatelessWidget {
                                       SizedBox(height: 10),
                                       Text(
                                         'Tasks',
-                                        style: AppThemeState().textStyleBold(
-                                            Colors.black,
-                                            fontSize: FontConstants.font_12,
-                                            decoration: TextDecoration.none),
+                                        style: AppThemeState().textStyleBold(Colors.black,
+                                            fontSize: FontConstants.font_12, decoration: TextDecoration.none),
                                       )
                                     ]),
                               ),
@@ -155,10 +144,8 @@ class DashbordScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         'Follow up\ Lead',
-                                        style: AppThemeState().textStyleBold(
-                                            Colors.black,
-                                            fontSize: FontConstants.font_12,
-                                            decoration: TextDecoration.none),
+                                        style: AppThemeState().textStyleBold(Colors.black,
+                                            fontSize: FontConstants.font_12, decoration: TextDecoration.none),
                                       )
                                     ]),
                               ),
@@ -174,10 +161,8 @@ class DashbordScreen extends StatelessWidget {
                                       Text(
                                         'Due Follow up Lead',
                                         textAlign: TextAlign.center,
-                                        style: AppThemeState().textStyleBold(
-                                            Colors.black,
-                                            fontSize: FontConstants.font_12,
-                                            decoration: TextDecoration.none),
+                                        style: AppThemeState().textStyleBold(Colors.black,
+                                            fontSize: FontConstants.font_12, decoration: TextDecoration.none),
                                       )
                                     ]),
                               ),

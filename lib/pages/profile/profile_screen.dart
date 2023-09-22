@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:practical/common/constants/color_constants.dart';
+import 'package:practical/common/constants/image_constants.dart';
+import 'package:practical/common/enums/loading_status.dart';
 import 'package:practical/common/widgets/common_button.dart';
 import 'package:practical/common/widgets/common_textformfield.dart';
 import 'package:practical/pages/profile/bloc/profile_bloc.dart';
+import 'package:practical/pages/register/model.dart';
+import 'package:practical/utils/CustomSnackBar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -25,6 +31,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final companyNameNode = FocusNode();
 
   final emailNode = FocusNode();
+  XFile? profileImage;
+
+  User? user;
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = user?.fullName ?? "";
+    companyNamecontroller.text = user?.cmpName ?? "";
+    emailController.text = user?.userName ?? "";
+    numberController.text = user?.contactNo.toString() ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +52,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: Icon(Icons.drag_handle),
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is ProfileInitstate) {
+            user = state.user;
+            nameController.text = state.user?.fullName ?? "";
+            companyNamecontroller.text = state.user?.cmpName ?? "";
+            emailController.text = state.user?.userName ?? "";
+            numberController.text = state.user?.contactNo.toString() ?? '';
+          }
+          if (state.status == LoadStatus.validationError) {
+            showErrorSnackBar(context, state.message);
+          } else if (state.status == LoadStatus.failure) {
+            EasyLoading.dismiss();
+            showErrorSnackBar(context, state.message);
+          } else if (state.status == LoadStatus.success) {
+            EasyLoading.dismiss();
+            showSuccessSnackBar(context, state.message);
+          } else if (state.status == LoadStatus.loading) {
+            EasyLoading.show(dismissOnTap: true);
+          } else if (state is updateState) {
+            Navigator.pop(context);
+          }
+        },
         builder: (context, state) {
           return Stack(
             children: [
@@ -52,14 +91,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundImage:
-                                AssetImage('assets/images/logo.png'),
+                            backgroundImage: AssetImage(ImageConstants.imgSplash),
                           ),
                           Positioned(
                             bottom: 0,
                             right: 0,
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                final ImagePicker picker = ImagePicker();
+                                picker.pickImage(source: ImageSource.camera).then((value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      profileImage = value;
+                                    });
+                                  }
+                                });
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -90,8 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           labelText: 'Full Name',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                           textInputType: TextInputType.name),
                       SizedBox(height: 10),
                       CommonTextFormField(
@@ -100,9 +146,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           labelText: 'Company Name',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
-                          textInputType: TextInputType.phone),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
+                          textInputType: TextInputType.name),
                       SizedBox(height: 10),
                       CommonTextFormField(
                           editController: emailController,
@@ -110,8 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           labelText: 'Email id',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                           textInputType: TextInputType.emailAddress),
                       SizedBox(height: 10),
                       CommonTextFormField(
@@ -120,8 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           labelText: 'Mobile No',
                           onChange: (p0) {},
                           inputBorders: OutlineInputBorder(),
-                          labelTextstyle:
-                              TextStyle(color: ColorConstants.blackColor),
+                          labelTextstyle: TextStyle(color: ColorConstants.blackColor),
                           textInputType: TextInputType.phone),
                       SizedBox(height: 30),
                       Flexible(
@@ -131,7 +174,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               flex: 1,
                               child: CommonButton(
                                 buttonText: 'Submit',
-                                onTap: () {},
+                                onTap: () {
+                                  if (profileImage != null) {
+                                    context.read<ProfileBloc>().add(ValidateEvent(
+                                        nameController.text,
+                                        companyNamecontroller.text,
+                                        numberController.text,
+                                        emailController.text,
+                                        profileImage));
+                                  } else {
+                                    showErrorSnackBar(context, 'please select image');
+                                  }
+                                },
                               ),
                             ),
                             SizedBox(width: 15),

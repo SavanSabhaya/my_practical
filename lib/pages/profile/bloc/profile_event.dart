@@ -9,12 +9,13 @@ class ProfileEvent extends Equatable {
 
 class ValidateEvent extends ProfileEvent {
   final String name;
+  final String cpname;
+
   final String number;
   final String email;
-  final String password;
-  final String cnfPassword;
-  ValidateEvent(
-      this.name, this.number, this.email, this.password, this.cnfPassword);
+  final XFile? profileImage;
+
+  ValidateEvent(this.name, this.cpname, this.number, this.email, this.profileImage);
 }
 
 class ProfileInitEvent extends ProfileEvent {}
